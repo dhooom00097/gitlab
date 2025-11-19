@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Teacher {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  classes   Class[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Class {
+  id        String   @id @default(cuid())
+  name      String
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  students  Student[]
+  sessions  AttendanceSession[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Student {
+  id        String   @id @default(cuid())
+  name      String
+  studentId String   @unique // The custom ID (e.g. university ID)
+  classes   Class[]
+  attendance AttendanceRecord[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AttendanceSession {
+  id        String   @id @default(cuid())
+  classId   String
+  class     Class    @relation(fields: [classId], references: [id])
+  token     String   @unique // The secure token for QR
+  expiresAt DateTime
+  isActive  Boolean  @default(true)
+  records   AttendanceRecord[]
+  createdAt DateTime @default(now())
+}
+
+model AttendanceRecord {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id])
+  sessionId String
+  session   AttendanceSession @relation(fields: [sessionId], references: [id])
+  timestamp DateTime @default(now())
+  ipAddress String?
+  deviceInfo String?
+  
+  @@unique([studentId, sessionId]) // Prevent duplicate attendance per session
+}
