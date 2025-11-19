@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function DELETE(
     req: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     const session = await getServerSession(authOptions)
 
@@ -14,7 +14,8 @@ export async function DELETE(
     }
 
     try {
-        const classId = params.id
+        const { id } = await params
+        const classId = id
 
         // Verify ownership
         const classRecord = await prisma.class.findUnique({

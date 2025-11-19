@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '../../auth/[...nextauth]/route'
+import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 
 export async function GET() {
@@ -24,7 +24,7 @@ export async function GET() {
             where: { teacherId },
             select: { id: true },
         })
-        const classIds = classes.map(c => c.id)
+        const classIds = classes.map((c) => c.id)
 
         const totalStudents = await prisma.student.count({
             where: {

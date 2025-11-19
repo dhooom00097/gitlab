@@ -5,7 +5,7 @@ import { headers } from 'next/headers'
 export async function POST(req: Request) {
     try {
         const { token, studentId, deviceInfo } = await req.json()
-        const headersList = headers()
+        const headersList = await headers()
         const ipAddress = headersList.get('x-forwarded-for') || 'unknown'
 
         if (!token || !studentId) {
