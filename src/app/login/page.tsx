@@ -6,18 +6,18 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
 
 export default function LoginPage() {
     const router = useRouter()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        setIsLoading(true)
+        setLoading(true)
 
         try {
             const result = await signIn('credentials', {
@@ -27,29 +27,31 @@ export default function LoginPage() {
             })
 
             if (result?.error) {
-                toast.error('Invalid credentials')
+                toast.error('بيانات الدخول غير صحيحة')
             } else {
-                toast.success('Logged in successfully')
                 router.push('/dashboard')
+                toast.success('تم تسجيل الدخول بنجاح')
             }
         } catch (error) {
-            toast.error('Something went wrong')
+            toast.error('حدث خطأ ما')
         } finally {
-            setIsLoading(false)
+            setLoading(false)
         }
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="flex min-h-screen items-center justify-center bg-gray-100 p-4">
             <Card className="w-full max-w-md">
                 <CardHeader>
-                    <CardTitle>Teacher Login</CardTitle>
-                    <CardDescription>Enter your credentials to access the dashboard</CardDescription>
+                    <CardTitle className="text-2xl text-center">تسجيل دخول المعلم</CardTitle>
+                    <CardDescription className="text-center">
+                        أدخل بريدك الإلكتروني وكلمة المرور للدخول
+                    </CardDescription>
                 </CardHeader>
-                <form onSubmit={handleSubmit}>
-                    <CardContent className="space-y-4">
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email">البريد الإلكتروني</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -60,7 +62,7 @@ export default function LoginPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">كلمة المرور</Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -69,13 +71,11 @@ export default function LoginPage() {
                                 required
                             />
                         </div>
-                    </CardContent>
-                    <CardFooter>
-                        <Button type="submit" className="w-full" disabled={isLoading}>
-                            {isLoading ? 'Logging in...' : 'Login'}
+                        <Button type="submit" className="w-full" disabled={loading}>
+                            {loading ? 'جاري الدخول...' : 'تسجيل الدخول'}
                         </Button>
-                    </CardFooter>
-                </form>
+                    </form>
+                </CardContent>
             </Card>
         </div>
     )

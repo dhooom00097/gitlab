@@ -49,3 +49,43 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
     }
 }
+
+export async function GET() {
+    const session = await getServerSession(authOptions)
+
+    if (!session) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    try {
+        // Fetch students who are enrolled in any class taught by the teacher
+        const students = await prisma.student.findMany({
+            where: {
+                classes: {
+                    some: {
+                        teacherId: session.user.id
+                    }
+                }
+            },
+            include: {
+                classes: {
+                    where: {
+                        teacherId: session.user.id
+                    },
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            },
+            orderBy: {
+                name: 'asc'
+            }
+        })
+
+        return NextResponse.json(students)
+    } catch (error) {
+        console.error('Error fetching students:', error)
+        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+    }
+}

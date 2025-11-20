@@ -46,7 +46,7 @@ export default function StudentsPage() {
             if (studentsRes.ok) setStudents(await studentsRes.json())
             if (classesRes.ok) setClasses(await classesRes.json())
         } catch (error) {
-            toast.error('Failed to fetch data')
+            toast.error('فشل في تحميل البيانات')
         } finally {
             setLoading(false)
         }
@@ -66,78 +66,78 @@ export default function StudentsPage() {
             })
 
             if (res.ok) {
-                toast.success('Student added')
+                toast.success('تم إضافة الطالب')
                 setNewStudentName('')
                 setNewStudentId('')
                 setSelectedClassId('')
                 setIsDialogOpen(false)
                 fetchData()
             } else {
-                toast.error('Failed to add student')
+                toast.error('فشل في إضافة الطالب')
             }
         } catch (error) {
-            toast.error('Error adding student')
+            toast.error('حدث خطأ أثناء إضافة الطالب')
         }
     }
 
     const handleDeleteStudent = async (id: string) => {
-        if (!confirm('Are you sure?')) return
+        if (!confirm('هل أنت متأكد؟')) return
 
         try {
             const res = await fetch(`/api/students/${id}`, {
                 method: 'DELETE',
             })
             if (res.ok) {
-                toast.success('Student deleted')
+                toast.success('تم حذف الطالب')
                 fetchData()
             } else {
-                toast.error('Failed to delete student')
+                toast.error('فشل في حذف الطالب')
             }
         } catch (error) {
-            toast.error('Error deleting student')
+            toast.error('حدث خطأ أثناء حذف الطالب')
         }
     }
 
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">Students</h2>
+                <h2 className="text-3xl font-bold tracking-tight">الطلاب</h2>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button>
-                            <Plus className="mr-2 h-4 w-4" /> Add Student
+                            <Plus className="ml-2 h-4 w-4" /> إضافة طالب
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Add New Student</DialogTitle>
+                            <DialogTitle>إضافة طالب جديد</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleCreateStudent} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">الاسم</Label>
                                 <Input
                                     id="name"
                                     value={newStudentName}
                                     onChange={(e) => setNewStudentName(e.target.value)}
-                                    placeholder="John Doe"
+                                    placeholder="الاسم الثلاثي"
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="studentId">Student ID</Label>
+                                <Label htmlFor="studentId">الرقم الجامعي</Label>
                                 <Input
                                     id="studentId"
                                     value={newStudentId}
                                     onChange={(e) => setNewStudentId(e.target.value)}
-                                    placeholder="S12345"
+                                    placeholder="مثال: 441234567"
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label htmlFor="class">Class</Label>
+                                <Label htmlFor="class">الفصل</Label>
                                 <Select value={selectedClassId} onValueChange={setSelectedClassId} required>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select a class" />
+                                        <SelectValue placeholder="اختر الفصل" />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {classes.map((cls) => (
@@ -148,7 +148,7 @@ export default function StudentsPage() {
                                     </SelectContent>
                                 </Select>
                             </div>
-                            <Button type="submit" className="w-full">Add Student</Button>
+                            <Button type="submit" className="w-full">إضافة</Button>
                         </form>
                     </DialogContent>
                 </Dialog>
@@ -156,7 +156,7 @@ export default function StudentsPage() {
 
             <Card>
                 <CardHeader>
-                    <CardTitle>All Students</CardTitle>
+                    <CardTitle>جميع الطلاب</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
@@ -164,7 +164,7 @@ export default function StudentsPage() {
                             <div key={student.id} className="flex items-center justify-between p-4 border rounded-lg">
                                 <div>
                                     <p className="font-medium">{student.name}</p>
-                                    <p className="text-sm text-muted-foreground">ID: {student.studentId}</p>
+                                    <p className="text-sm text-muted-foreground">الرقم: {student.studentId}</p>
                                     <div className="flex gap-2 mt-1">
                                         {student.classes.map((c) => (
                                             <span key={c.id} className="text-xs bg-gray-100 px-2 py-1 rounded">
@@ -179,7 +179,7 @@ export default function StudentsPage() {
                             </div>
                         ))}
                         {students.length === 0 && !loading && (
-                            <p className="text-center text-muted-foreground py-8">No students found.</p>
+                            <p className="text-center text-muted-foreground py-8">لا يوجد طلاب.</p>
                         )}
                     </div>
                 </CardContent>

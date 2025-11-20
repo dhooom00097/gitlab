@@ -35,7 +35,7 @@ export default function ClassesPage() {
             const data = await res.json()
             setClasses(data)
         } catch (error) {
-            toast.error('Failed to fetch classes')
+            toast.error('فشل في تحميل الفصول')
         } finally {
             setLoading(false)
         }
@@ -51,69 +51,69 @@ export default function ClassesPage() {
             })
 
             if (res.ok) {
-                toast.success('Class created')
+                toast.success('تم إنشاء الفصل')
                 setNewClassName('')
                 setIsDialogOpen(false)
                 fetchClasses()
             } else {
-                toast.error('Failed to create class')
+                toast.error('فشل في إنشاء الفصل')
             }
         } catch (error) {
-            toast.error('Error creating class')
+            toast.error('حدث خطأ أثناء إنشاء الفصل')
         }
     }
 
     const handleDeleteClass = async (id: string) => {
-        if (!confirm('Are you sure? This will delete all data for this class.')) return
+        if (!confirm('هل أنت متأكد؟ سيتم حذف جميع البيانات المتعلقة بهذا الفصل.')) return
 
         try {
             const res = await fetch(`/api/classes/${id}`, {
                 method: 'DELETE',
             })
             if (res.ok) {
-                toast.success('Class deleted')
+                toast.success('تم حذف الفصل')
                 fetchClasses()
             } else {
-                toast.error('Failed to delete class')
+                toast.error('فشل في حذف الفصل')
             }
         } catch (error) {
-            toast.error('Error deleting class')
+            toast.error('حدث خطأ أثناء حذف الفصل')
         }
     }
 
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between">
-                <h2 className="text-3xl font-bold tracking-tight">My Classes</h2>
+                <h2 className="text-3xl font-bold tracking-tight">فصولي</h2>
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
                         <Button>
-                            <Plus className="mr-2 h-4 w-4" /> Create Class
+                            <Plus className="ml-2 h-4 w-4" /> إنشاء فصل
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>
-                            <DialogTitle>Create New Class</DialogTitle>
+                            <DialogTitle>إنشاء فصل جديد</DialogTitle>
                         </DialogHeader>
                         <form onSubmit={handleCreateClass} className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Class Name</Label>
+                                <Label htmlFor="name">اسم الفصل</Label>
                                 <Input
                                     id="name"
                                     value={newClassName}
                                     onChange={(e) => setNewClassName(e.target.value)}
-                                    placeholder="e.g. Math 101"
+                                    placeholder="مثال: رياضيات 101"
                                     required
                                 />
                             </div>
-                            <Button type="submit" className="w-full">Create</Button>
+                            <Button type="submit" className="w-full">إنشاء</Button>
                         </form>
                     </DialogContent>
                 </Dialog>
             </div>
 
             {loading ? (
-                <div>Loading...</div>
+                <div>جاري التحميل...</div>
             ) : (
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {classes.map((cls) => (
@@ -126,11 +126,16 @@ export default function ClassesPage() {
                             </CardHeader>
                             <CardContent>
                                 <div className="text-sm text-muted-foreground mb-4">
-                                    {cls._count.students} Students • {cls._count.sessions} Sessions
+                                    {cls._count.students} طالب • {cls._count.sessions} جلسة
                                 </div>
                                 <Link href={`/dashboard/attendance/${cls.id}`}>
-                                    <Button className="w-full">
-                                        <QrCode className="mr-2 h-4 w-4" /> Start Attendance
+                                    <Button className="w-full mb-2">
+                                        <QrCode className="ml-2 h-4 w-4" /> بدء الحضور
+                                    </Button>
+                                </Link>
+                                <Link href={`/dashboard/classes/${cls.id}`}>
+                                    <Button variant="outline" className="w-full">
+                                        عرض التقارير
                                     </Button>
                                 </Link>
                             </CardContent>
